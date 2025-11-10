@@ -1,64 +1,86 @@
 <!doctype html>
-
 <html lang="en">
 
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pesquisa de seguros</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" 
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script>
 
+    <script>
         $(document).ready(function () {
 
-            $("#buscar").click(function () {
+            // pra buscar o cep
+            $("#buscarCep").click(function () {
 
-                let cep = parseInt($("#cep").val());
-                
-                let url = 'https://brasilapi.com.br/api/cep/v2/'+cep;
+                let cep = $("#cep").val().trim();
+                let url = "https://brasilapi.com.br/api/cep/v2/" + cep;
 
-                $.get(url, function (data, status) {
-                     $("#resultado").val(JSON.stringify(data));
-                     console.log(data);
+                $.get(url, function (data) {
+
+                    const texto =
+                        "Rua: " + data.street + ", " +
+                        "Bairro: " + data.neighborhood + ", " +
+                        "Cidade: " + data.city + ", " +
+                        "Estado: " + data.state;
+
+                    $("#resultadoCep").val(texto);
                 });
-
             });
 
+            // Busca da tebela fipe
+            $("#buscarFipe").click(function () {
+
+                const numero = $("#numeroFipe").val().trim();
+                let url = "https://brasilapi.com.br/api/fipe/preco/v1/" + numero;
+
+                $.get(url, function (data) {
+
+                    const texto =
+                        "Modelo: " + data[0].modelo + ", " +
+                        "Marca: " + data[0].marca + ", " +
+                        "Valor: " + data[0].valor;
+
+                    $("#resultadoFipe").val(texto);
+                });
+            });
 
         });
     </script>
 
-  </head>
+</head>
 
-  <body>
+<div class="container">
+<h1 class="mb-4">Pesquisa da área para seguros</h1>
 
-    <div class="container">
-
-  <h1 style="text-align: center; padding-top: 10px;">Pesquisa de área para seguros</h1>
-  <br>
-
-        <div class="row">
-            <div class="col-8">
-                <input type="text" class="form-control" id="cep" placeholder="Digite o seu CEP">
-            </div>
-            <div class="col-4">
-                <button class="btn btn-primary btn-lg" id="buscar">Buscar</button>
-            </div>
-        </div>
-        <br><br>
-        <div class="row">
-            <div class="col">
-                <textarea class="form-control" id="resultado" rows="3"></textarea>
-            </div>
-        </div>
-
+<div class="row align-items-center mb-3">
+    <div class="col-8">
+        <label for="cep" class="form-label">Digite seu CEP</label>
+        <input type="number" class="form-control" id="cep" placeholder="Escreva seu CEP">
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    
-</body>
+    <div class="col">
+        <button type="button" class="btn btn-primary btn-lg mt-3" id="buscarCep">Buscar endereço</button>
+    </div>
+</div>
 
+<label class="form-label">Resultado</label>
+<textarea class="form-control mb-4" rows="3" id="resultadoCep" disabled></textarea>
+ 
+
+    <h5>Digite código da tabela Fipe</h5>
+    <div class="row align-items-center mb-3">
+        <div class="col-8">
+            <input type="text" class="form-control" placeholder="Número da tabela FIPE" id="numeroFipe">
+        </div>
+        <div class="col">
+            <button type="button" id="buscarFipe" class="btn btn-primary btn-lg">Buscar valor do carro</button>
+        </div>
+    </div>
+
+    <textarea class="form-control" id="resultadoFipe" rows="3"></textarea>
+</div>  
+</body>
 </html>
